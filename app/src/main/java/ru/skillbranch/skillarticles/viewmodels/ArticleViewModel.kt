@@ -12,7 +12,7 @@ import ru.skillbranch.skillarticles.extensions.format
 /**
  * Created by Oleksiy Pasmarnov on 14.11.21
  */
-class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleState>(ArticleState()) {
+class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleState>(ArticleState()), IArticleViewModel {
     private val repository = ArticleRepository
 
     init {
@@ -55,28 +55,28 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
      * Получение полной информации о статье из сети
      * (или базы данных если она сохранена, наличие статьи в базе не надо реализовывать в данном уроке)
      */
-    private fun getArticleContent(): LiveData<List<Any>?> {
+    override fun getArticleContent(): LiveData<List<Any>?> {
         return repository.loadArticleContent(articleId)
     }
 
     /**
      * Получение краткой информации о статье из базы данных
      */
-    private fun getArticleData(): LiveData<ArticleData?> {
+    override fun getArticleData(): LiveData<ArticleData?> {
         return repository.getArticle(articleId)
     }
 
     /**
      * Получение пользовательской информации о статье из базы данных
      */
-    private fun getArticlePersonalInfo(): LiveData<ArticlePersonalInfo?> {
+    override fun getArticlePersonalInfo(): LiveData<ArticlePersonalInfo?> {
         return repository.loadArticlePersonalInfo(articleId)
     }
 
     /**
      * Получение настроек приложения
      */
-    fun handleNightMode() {
+    override fun handleNightMode() {
         val settings = currentState.toAppSettings()
         repository.updateSettings(settings.copy(isDarkMode = !settings.isDarkMode))
     }
@@ -86,7 +86,7 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
      * Обработка нажатия на btn_text_up (увеличение шрифта текста)
      * необходимо увеличить шрифт до значения 18
      */
-    fun handleUpText() {
+    override fun handleUpText() {
         repository.updateSettings(currentState.toAppSettings().copy(isBigText = true))
     }
 
@@ -94,7 +94,7 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
      * Обработка нажатия на btn_text_down (стандартный размер шрифта)
      * необходимо установить размер шрифта по умолчанию 14
      */
-    fun handleDownText() {
+    override fun handleDownText() {
         repository.updateSettings(currentState.toAppSettings().copy(isBigText = false))
     }
 
@@ -103,8 +103,18 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
      * необходимо отобразить сообщение пользователю "Add to bookmarks" или "Remove from bookmarks"
      * в соответствии с текущим состоянием
      */
-    fun handleBookmark() {
-        // TODO not yet implemented
+    override fun handleBookmark() {
+        val toggleBookmark = {
+            val info = currentState.toArticlePersonalInfo()
+            repository.updateArticlePersonalInfo(info.copy(isBookmark = !info.isBookmark))
+        }
+
+        toggleBookmark()
+
+        val msg = if (currentState.isBookmark) Notify.TextMessage("Add to bookmarks")
+        else Notify.TextMessage("Remove from bookmarks")
+
+        notify(msg)
     }
 
     /**
@@ -114,7 +124,7 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
      * если пользователь убрал Like необходимо добавить  actionLabel в снекбар
      * "No, still like it" при нажатиии на который состояние вернется к isLike = true
      */
-    fun handleLike() {
+    override fun handleLike() {
         val toggleLike = {
             val info = currentState.toArticlePersonalInfo()
             repository.updateArticlePersonalInfo(info.copy(isLike = !info.isLike))
@@ -138,7 +148,7 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
      * необходимо отобразить сообщение с ошибкой пользователю (Notify.ErrorMessage) "Share is not implemented"
      * и текстом errLabel "OK"
      */
-    fun handleShare() {
+    override fun handleShare() {
         val msg = "Share is not implemented"
         notify(Notify.ErrorMessage(msg, "OK", null))
     }
@@ -147,7 +157,7 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
      * обрабока нажатия на кнопку btn_settings
      * необходимо отобразить или скрыть меню в соответствии с текущим состоянием
      */
-    fun handleToggleMenu() {
+    override fun handleToggleMenu() {
         updateState { it.copy(isShowMenu = !it.isShowMenu) }
     }
 
@@ -156,7 +166,7 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
      * при нажатии на пункту меню тулбара необходимо отобразить searchView и сохранить состояние при
      * изменении конфигурации (пересоздании активити)
      */
-    fun handleSearchMode(isSearch: Boolean) {
+    override fun handleSearchMode(isSearch: Boolean) {
         // TODO not yet implemented
     }
 
@@ -164,7 +174,7 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
      * обрабока поискового запроса, необходимо сохранить поисковый запрос и отображать его в
      * searchView при изменении конфигурации (пересоздании активити)
      */
-    fun handleSearch(query: String?) {
+    override fun handleSearch(query: String?) {
         // TODO not yet implemented
     }
 }
