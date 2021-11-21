@@ -2,9 +2,12 @@ package ru.skillbranch.skillarticles.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
@@ -45,13 +48,66 @@ class RootActivity : AppCompatActivity() {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_search, menu)
+        val searchItem = menu?.findItem(R.id.action_search)
+        val mSearchView = searchItem?.actionView as SearchView
+        mSearchView.apply {
+
+            val currentState = viewModel.getAppSettings().value
+
+            val isSearch = currentState?.isSearch ?: false
+            val currentQuery = currentState?.querySearch ?: ""
+
+            isSubmitButtonEnabled = true
+            queryHint = "Search"
+
+            if (isSearch) {
+                searchItem.expandActionView()
+                onActionViewExpanded()
+                setQuery(currentQuery, false)
+            }
+
+            searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+                override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                    viewModel.handleSearchMode(true)
+                    onActionViewExpanded()
+                    return true
+                }
+
+                override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                    viewModel.handleSearchMode(false)
+                    onActionViewCollapsed()
+                    return true
+                }
+
+            })
+
+            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    viewModel.handleSearch(query)
+                    setQuery(null, false)
+                    return true
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    viewModel.handleSearch(newText)
+                    return true
+                }
+            })
+        }
+
+        return super.onCreateOptionsMenu(menu)
+    }
+
     private fun renderNotification(notify: Notify) {
         val snackbar =
             Snackbar.make(binding.coordinatorContainer, notify.message, Snackbar.LENGTH_LONG)
                 .setAnchorView(binding.bottombar)
 
         when (notify) {
-            is Notify.TextMessage -> { /*nothing*/ }
+            is Notify.TextMessage -> { /*nothing*/
+            }
             is Notify.ActionMessage -> {
                 snackbar.setActionTextColor(getColor(R.color.color_accent_dark))
                 snackbar.setAction(notify.actionLabel) {

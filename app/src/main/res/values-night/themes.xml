@@ -29,4 +29,10 @@
         <item name="colorSurface">@color/color_article_bar</item>
         <item name="colorControlNormal">@color/color_on_article_bar</item>
     </style>
+
+    <style name="SearchBarTheme" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColorHint">@color/color_on_surface</item>
+        <item name="colorSecondary">@color/color_accent</item>
+    </style>
 </resources>

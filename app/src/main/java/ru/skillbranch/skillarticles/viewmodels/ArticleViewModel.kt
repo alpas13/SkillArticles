@@ -1,7 +1,8 @@
 package ru.skillbranch.skillarticles.viewmodels
 
-import androidx.appcompat.app.AppCompatDelegate
+import android.util.Log
 import androidx.lifecycle.LiveData
+import ru.skillbranch.skillarticles.data.AppSettings
 import ru.skillbranch.skillarticles.data.ArticleData
 import ru.skillbranch.skillarticles.data.ArticlePersonalInfo
 import ru.skillbranch.skillarticles.data.repositories.ArticleRepository
@@ -23,7 +24,8 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
                 title = article.title,
                 category = article.category,
                 categoryIcon = article.categoryIcon,
-                date = article.date.format()
+                date = article.date.format(),
+                author = article.author
             )
         }
 
@@ -47,6 +49,8 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
             state.copy(
                 isDarkMode = settings.isDarkMode,
                 isBigText = settings.isBigText,
+                searchQuery = settings.querySearch,
+                isSearch = settings.isSearch,
             )
         }
     }
@@ -71,6 +75,10 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
      */
     override fun getArticlePersonalInfo(): LiveData<ArticlePersonalInfo?> {
         return repository.loadArticlePersonalInfo(articleId)
+    }
+
+    fun getAppSettings(): LiveData<AppSettings> {
+        return repository.getAppSettings()
     }
 
     /**
@@ -167,7 +175,8 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
      * изменении конфигурации (пересоздании активити)
      */
     override fun handleSearchMode(isSearch: Boolean) {
-        // TODO not yet implemented
+        val settings = currentState.toAppSettings()
+        repository.updateSettings(settings.copy(isSearch = isSearch))
     }
 
     /**
@@ -175,7 +184,8 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
      * searchView при изменении конфигурации (пересоздании активити)
      */
     override fun handleSearch(query: String?) {
-        // TODO not yet implemented
+        val settings = currentState.toAppSettings()
+        repository.updateSettings(settings.copy(querySearch = query))
     }
 }
 

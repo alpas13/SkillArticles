@@ -1,5 +1,6 @@
 package ru.skillbranch.skillarticles.data
 
+import android.util.Log
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -112,7 +113,9 @@ data class ArticlePersonalInfo(
 
 data class AppSettings(
     val isDarkMode: Boolean = false,
-    val isBigText: Boolean = false
+    val isBigText: Boolean = false,
+    val querySearch: String? = null,
+    val isSearch: Boolean = false,
 )
 
 val longText: String = """

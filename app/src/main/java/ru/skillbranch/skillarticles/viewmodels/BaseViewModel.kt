@@ -1,6 +1,7 @@
 package ru.skillbranch.skillarticles.viewmodels
 
 import androidx.annotation.UiThread
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.*
 import java.lang.IllegalArgumentException
 
@@ -8,13 +9,16 @@ import java.lang.IllegalArgumentException
  * Created by Oleksiy Pasmarnov on 13.11.21
  */
 abstract class BaseViewModel<T>(initState: T) : ViewModel() {
-    private val notifications = MutableLiveData<Event<Notify>>()
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    val notifications = MutableLiveData<Event<Notify>>()
 
-    protected val state: MediatorLiveData<T> = MediatorLiveData<T>().apply {
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    val state: MediatorLiveData<T> = MediatorLiveData<T>().apply {
         value = initState
     }
 
-    protected val currentState
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    val currentState
         get() = state.value!!
 
     @UiThread
@@ -65,6 +69,8 @@ class Event<out E>(private val content: E) {
             content
         }
     }
+
+    fun peekContent(): E = content
 }
 
 class EventObserver<E>(private val onEventUnhandledContent: (E) -> Unit) : Observer<Event<E>> {
