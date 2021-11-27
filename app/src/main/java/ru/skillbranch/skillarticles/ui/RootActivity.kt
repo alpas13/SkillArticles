@@ -168,30 +168,26 @@ class RootActivity : AppCompatActivity() {
             btnBookmark.isChecked = data.isBookmark
         }
 
-        subMenuBinding.apply {
-            switchMode.isChecked = data.isDarkMode
-            delegate.localNightMode =
-                if (data.isDarkMode) AppCompatDelegate.MODE_NIGHT_YES
-                else AppCompatDelegate.MODE_NIGHT_NO
-            if (data.isBigText) {
-                binding.tvTextContent.textSize = 18f
-                btnTextUp.isChecked = true
-                btnTextDown.isChecked = false
-            } else {
-                binding.tvTextContent.textSize = 14f
-                btnTextUp.isChecked = false
-                btnTextDown.isChecked = true
-            }
+        subMenuBinding.switchMode.isChecked = data.isDarkMode
+        delegate.localNightMode =
+            if (data.isDarkMode) AppCompatDelegate.MODE_NIGHT_YES
+            else AppCompatDelegate.MODE_NIGHT_NO
+        if (data.isBigText) {
+            binding.tvTextContent.textSize = 18f
+            subMenuBinding.btnTextUp.isChecked = true
+            subMenuBinding.btnTextDown.isChecked = false
+        } else {
+            binding.tvTextContent.textSize = 14f
+            subMenuBinding.btnTextUp.isChecked = false
+            subMenuBinding.btnTextDown.isChecked = true
         }
 
-        binding.apply {
-            tvTextContent.text =
-                if (data.isLoadingContent) "loading" else data.content.first() as String
-            toolbar.title = data.title ?: "loading"
-            toolbar.subtitle = data.category ?: "loading"
-            if (data.category != null) toolbar.logo =
-                AppCompatResources.getDrawable(this@RootActivity, data.categoryIcon as Int)
-        }
+        binding.tvTextContent.text =
+            if (data.isLoadingContent) "loading" else data.content.first() as String
+        binding.toolbar.title = data.title ?: "loading"
+        binding.toolbar.subtitle = data.category ?: "loading"
+        if (data.category != null) binding.toolbar.logo =
+            AppCompatResources.getDrawable(this@RootActivity, data.categoryIcon as Int)
     }
 
     private fun setupToolbar() {

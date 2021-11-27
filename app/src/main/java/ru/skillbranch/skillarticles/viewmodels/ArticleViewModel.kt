@@ -50,7 +50,7 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
                 isDarkMode = settings.isDarkMode,
                 isBigText = settings.isBigText,
                 searchQuery = settings.querySearch,
-                isSearch = settings.isSearch,
+                isSearch = settings.isSearch
             )
         }
     }
@@ -211,5 +211,5 @@ data class ArticleState(
     val author: Any? = null,
     val poster: String? = null,
     val content: List<Any> = emptyList(),
-    val reviews: List<Any> = emptyList(),
+    val reviews: List<Any> = emptyList()
 )
