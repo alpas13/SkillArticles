@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import ru.skillbranch.skillarticles.data.AppSettings
 import ru.skillbranch.skillarticles.data.ArticleData
 import ru.skillbranch.skillarticles.data.ArticlePersonalInfo
-import ru.skillbranch.skillarticles.data.SearchData
+/*import ru.skillbranch.skillarticles.data.SearchData*/
 import ru.skillbranch.skillarticles.data.repositories.ArticleRepository
 import ru.skillbranch.skillarticles.extensions.data.toAppSettings
 import ru.skillbranch.skillarticles.extensions.data.toArticlePersonalInfo
@@ -52,12 +52,12 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
             )
         }
 
-        subscribeOnDataSource(repository.getSearchData()) { searchData, state ->
+        /*subscribeOnDataSource(repository.getSearchData()) { searchData, state ->
             state.copy(
                 searchQuery = searchData.querySearch,
                 isSearch = searchData.isSearch
             )
-        }
+        }*/
     }
 
     /**
@@ -90,13 +90,13 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
         repository.updateSettings(settings.copy(isDarkMode = !settings.isDarkMode))
     }
 
-    fun getAppSettings(): LiveData<AppSettings> {
+    /*fun getAppSettings(): LiveData<AppSettings> {
         return repository.getAppSettings()
     }
 
     fun getSearchData(): LiveData<SearchData> {
         return repository.getSearchData()
-    }
+    }*/
 
 
     /**
