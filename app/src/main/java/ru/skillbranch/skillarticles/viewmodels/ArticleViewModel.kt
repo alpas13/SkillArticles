@@ -1,12 +1,12 @@
 package ru.skillbranch.skillarticles.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import ru.skillbranch.skillarticles.data.AppSettings
 import ru.skillbranch.skillarticles.data.ArticleData
 import ru.skillbranch.skillarticles.data.ArticlePersonalInfo
 import ru.skillbranch.skillarticles.data.SearchData
 import ru.skillbranch.skillarticles.data.repositories.ArticleRepository
+import ru.skillbranch.skillarticles.data.repositories.SearchRepository
 import ru.skillbranch.skillarticles.extensions.data.toAppSettings
 import ru.skillbranch.skillarticles.extensions.data.toArticlePersonalInfo
 import ru.skillbranch.skillarticles.extensions.data.toSearchData
@@ -17,6 +17,7 @@ import ru.skillbranch.skillarticles.extensions.format
  */
 class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleState>(ArticleState()), IArticleViewModel {
     private val repository = ArticleRepository
+    private val searchRepository = SearchRepository
 
     init {
         subscribeOnDataSource(getArticleData()) { article, state ->
@@ -50,11 +51,11 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
         subscribeOnDataSource(repository.getAppSettings()) { settings, state ->
             state.copy(
                 isDarkMode = settings.isDarkMode,
-                isBigText = settings.isBigText,
+                isBigText = settings.isBigText
             )
         }
 
-        subscribeOnDataSource(repository.getSearchData()) { searchData, state ->
+        subscribeOnDataSource(searchRepository.getSearchData()) { searchData, state ->
             state.copy(
                 searchQuery = searchData.querySearch,
                 isSearch = searchData.isSearch
@@ -97,7 +98,7 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
     }
 
     fun getSearchData(): LiveData<SearchData> {
-        return repository.getSearchData()
+        return searchRepository.getSearchData()
     }
 
 
@@ -187,7 +188,7 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
      */
     override fun handleSearchMode(isSearch: Boolean) {
         val searchData = currentState.toSearchData()
-        repository.updateSearchData(searchData.copy(isSearch = isSearch))
+        searchRepository.updateSearchData(searchData.copy(isSearch = isSearch))
     }
 
     /**
@@ -196,7 +197,7 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
      */
     override fun handleSearch(query: String?) {
         val searchData = currentState.toSearchData()
-        repository.updateSearchData(searchData.copy(querySearch = query))
+        searchRepository.updateSearchData(searchData.copy(querySearch = query))
     }
 }
 

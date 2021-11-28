@@ -15,8 +15,6 @@ object LocalDataHolder {
     val articleInfo = MutableLiveData<ArticlePersonalInfo?>(null)
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val settings = MutableLiveData(AppSettings())
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    val search = MutableLiveData(SearchData())
 
 
     fun findArticle(articleId: String): LiveData<ArticleData?> {
@@ -50,11 +48,6 @@ object LocalDataHolder {
     fun getAppSettings() = settings
     fun updateAppSettings(appSettings: AppSettings) {
         settings.value = appSettings
-    }
-
-    fun getSearchData() = search
-    fun updateSearchData(searchData: SearchData) {
-        search.value = searchData
     }
 
     fun updateArticlePersonalInfo(info: ArticlePersonalInfo) {
@@ -120,11 +113,6 @@ data class ArticlePersonalInfo(
 data class AppSettings(
     val isDarkMode: Boolean = false,
     val isBigText: Boolean = false,
-)
-
-data class SearchData(
-    val querySearch: String? = null,
-    val isSearch: Boolean = false,
 )
 
 val longText: String = """
