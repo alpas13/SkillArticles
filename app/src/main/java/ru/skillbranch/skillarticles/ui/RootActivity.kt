@@ -54,7 +54,7 @@ class RootActivity : AppCompatActivity() {
         val mSearchView = searchItem?.actionView as SearchView
         mSearchView.apply {
 
-            val currentState = viewModel.getAppSettings().value
+            val currentState = viewModel.getSearchData().value
 
             val isSearch = currentState?.isSearch ?: false
             val currentQuery = currentState?.querySearch ?: ""

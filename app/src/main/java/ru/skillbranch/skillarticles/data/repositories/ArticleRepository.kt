@@ -1,6 +1,5 @@
 package ru.skillbranch.skillarticles.data.repositories
 
-import androidx.core.os.persistableBundleOf
 import androidx.lifecycle.LiveData
 import ru.skillbranch.skillarticles.data.*
 
@@ -24,6 +23,12 @@ object ArticleRepository {
 
     fun updateSettings(appSettings: AppSettings) {
         local.updateAppSettings(appSettings)
+    }
+
+    fun getSearchData(): LiveData<SearchData> = local.getSearchData()
+
+    fun updateSearchData(searchData: SearchData) {
+        local.updateSearchData(searchData)
     }
 
     fun updateArticlePersonalInfo(info: ArticlePersonalInfo) {
