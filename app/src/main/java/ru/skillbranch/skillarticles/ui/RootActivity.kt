@@ -5,17 +5,21 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.switchmaterial.SwitchMaterial
 import ru.skillbranch.skillarticles.R
-import ru.skillbranch.skillarticles.databinding.ActivityRootBinding
-import ru.skillbranch.skillarticles.databinding.LayoutBottombarBinding
-import ru.skillbranch.skillarticles.databinding.LayoutSubmenuBinding
 import ru.skillbranch.skillarticles.extensions.data.dpToIntPx
+import ru.skillbranch.skillarticles.ui.custom.ArticleSubmenu
+import ru.skillbranch.skillarticles.ui.custom.Bottombar
+import ru.skillbranch.skillarticles.ui.custom.CheckableImageView
 import ru.skillbranch.skillarticles.viewmodels.ArticleState
 import ru.skillbranch.skillarticles.viewmodels.ArticleViewModel
 import ru.skillbranch.skillarticles.viewmodels.Notify
@@ -23,17 +27,19 @@ import ru.skillbranch.skillarticles.viewmodels.ViewModelFactory
 
 class RootActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityRootBinding
-    private lateinit var btmBarBinding: LayoutBottombarBinding
-    private lateinit var subMenuBinding: LayoutSubmenuBinding
     private lateinit var viewModel: ArticleViewModel
+    private lateinit var toolbar: MaterialToolbar
+    private lateinit var btnLike: CheckableImageView
+    private lateinit var btnBookmark: CheckableImageView
+    private lateinit var btnShare: ImageView
+    private lateinit var btnSettings: CheckableImageView
+    private lateinit var btnTextUp: CheckableImageView
+    private lateinit var btnTextDown: CheckableImageView
+    private lateinit var switchMode: SwitchMaterial
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityRootBinding.inflate(layoutInflater)
-        btmBarBinding = LayoutBottombarBinding.bind(binding.root)
-        subMenuBinding = LayoutSubmenuBinding.bind(binding.root)
-        setContentView(binding.root)
+        setContentView(R.layout.activity_root)
         setupToolbar()
         setUpBottomBar()
         setUpSubMenu()
@@ -101,9 +107,12 @@ class RootActivity : AppCompatActivity() {
     }
 
     private fun renderNotification(notify: Notify) {
+        val coordinatorContainer: CoordinatorLayout = findViewById(R.id.coordinator_container)
+        val bottombar: Bottombar = findViewById(R.id.bottombar)
+
         val snackbar =
-            Snackbar.make(binding.coordinatorContainer, notify.message, Snackbar.LENGTH_LONG)
-                .setAnchorView(binding.bottombar)
+            Snackbar.make(coordinatorContainer, notify.message, Snackbar.LENGTH_LONG)
+                .setAnchorView(bottombar)
 
         when (notify) {
             is Notify.TextMessage -> { /*nothing*/
@@ -130,68 +139,81 @@ class RootActivity : AppCompatActivity() {
     }
 
     private fun setUpSubMenu() {
-        subMenuBinding.apply {
-            btnTextUp.setOnClickListener {
-                viewModel.handleUpText()
-            }
-            btnTextDown.setOnClickListener {
-                viewModel.handleDownText()
-            }
-            switchMode.setOnClickListener {
-                viewModel.handleNightMode()
-            }
+        btnTextUp = findViewById(R.id.btn_text_up)
+        btnTextDown = findViewById(R.id.btn_text_down)
+        switchMode = findViewById(R.id.switch_mode)
+
+        btnTextUp.setOnClickListener {
+            viewModel.handleUpText()
+        }
+        btnTextDown.setOnClickListener {
+            viewModel.handleDownText()
+        }
+        switchMode.setOnClickListener {
+            viewModel.handleNightMode()
         }
     }
 
     private fun setUpBottomBar() {
-        btmBarBinding.apply {
-            btnLike.setOnClickListener {
-                viewModel.handleLike()
-            }
-            btnBookmark.setOnClickListener {
-                viewModel.handleBookmark()
-            }
-            btnShare.setOnClickListener {
-                viewModel.handleShare()
-            }
-            btnSettings.setOnClickListener {
-                viewModel.handleToggleMenu()
-            }
+        btnLike = findViewById(R.id.btn_like)
+        btnBookmark = findViewById(R.id.btn_bookmark)
+        btnShare = findViewById(R.id.btn_share)
+        btnSettings = findViewById(R.id.btn_settings)
+
+        btnLike.setOnClickListener {
+            viewModel.handleLike()
+        }
+        btnBookmark.setOnClickListener {
+            viewModel.handleBookmark()
+        }
+        btnShare.setOnClickListener {
+            viewModel.handleShare()
+        }
+        btnSettings.setOnClickListener {
+            viewModel.handleToggleMenu()
         }
     }
 
     private fun renderUi(data: ArticleState) {
-        btmBarBinding.apply {
-            btnSettings.isChecked = data.isShowMenu
-            if (data.isShowMenu) binding.submenu.open() else binding.submenu.close()
-            btnLike.isChecked = data.isLike
-            btnBookmark.isChecked = data.isBookmark
-        }
+        val submenu: ArticleSubmenu = findViewById(R.id.submenu)
+        val tvTextContent: TextView = findViewById(R.id.tv_text_content)
+        toolbar = findViewById(R.id.toolbar)
+        btnLike = findViewById(R.id.btn_like)
+        btnBookmark = findViewById(R.id.btn_bookmark)
+        btnSettings = findViewById(R.id.btn_settings)
+        btnTextUp = findViewById(R.id.btn_text_up)
+        btnTextDown = findViewById(R.id.btn_text_down)
+        switchMode = findViewById(R.id.switch_mode)
 
-        subMenuBinding.switchMode.isChecked = data.isDarkMode
+        btnSettings.isChecked = data.isShowMenu
+        if (data.isShowMenu) submenu.open() else submenu.close()
+        btnLike.isChecked = data.isLike
+        btnBookmark.isChecked = data.isBookmark
+
+        switchMode.isChecked = data.isDarkMode
         delegate.localNightMode =
             if (data.isDarkMode) AppCompatDelegate.MODE_NIGHT_YES
             else AppCompatDelegate.MODE_NIGHT_NO
         if (data.isBigText) {
-            binding.tvTextContent.textSize = 18f
-            subMenuBinding.btnTextUp.isChecked = true
-            subMenuBinding.btnTextDown.isChecked = false
+            tvTextContent.textSize = 18f
+            btnTextUp.isChecked = true
+            btnTextDown.isChecked = false
         } else {
-            binding.tvTextContent.textSize = 14f
-            subMenuBinding.btnTextUp.isChecked = false
-            subMenuBinding.btnTextDown.isChecked = true
+            tvTextContent.textSize = 14f
+            btnTextUp.isChecked = false
+            btnTextDown.isChecked = true
         }
 
-        binding.tvTextContent.text =
+        tvTextContent.text =
             if (data.isLoadingContent) "loading" else data.content.first() as String
-        binding.toolbar.title = data.title ?: "loading"
-        binding.toolbar.subtitle = data.category ?: "loading"
-        if (data.category != null) binding.toolbar.logo =
+        toolbar.title = data.title ?: "loading"
+        toolbar.subtitle = data.category ?: "loading"
+        if (data.category != null) toolbar.logo =
             AppCompatResources.getDrawable(this@RootActivity, data.categoryIcon as Int)
     }
 
     private fun setupToolbar() {
-        val toolbar = binding.toolbar
+        toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         val logo = if (toolbar.childCount > 2) toolbar.getChildAt(2) as ImageView else null
