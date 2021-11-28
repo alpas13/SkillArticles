@@ -8,7 +8,6 @@ import ru.skillbranch.skillarticles.data.SearchData
 import ru.skillbranch.skillarticles.data.repositories.ArticleRepository
 import ru.skillbranch.skillarticles.extensions.data.toAppSettings
 import ru.skillbranch.skillarticles.extensions.data.toArticlePersonalInfo
-import ru.skillbranch.skillarticles.extensions.data.toSearchData
 import ru.skillbranch.skillarticles.extensions.format
 
 /**
@@ -185,8 +184,8 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
      * изменении конфигурации (пересоздании активити)
      */
     override fun handleSearchMode(isSearch: Boolean) {
-        val searchData = currentState.toSearchData()
-        repository.updateSearchData(searchData.copy(isSearch = isSearch))
+        /*val searchData = currentState.toSearchData()
+        repository.updateSearchData(searchData.copy(isSearch = isSearch))*/
     }
 
     /**
@@ -194,8 +193,8 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
      * searchView при изменении конфигурации (пересоздании активити)
      */
     override fun handleSearch(query: String?) {
-        val searchData = currentState.toSearchData()
-        repository.updateSearchData(searchData.copy(querySearch = query))
+        /*val searchData = currentState.toSearchData()
+        repository.updateSearchData(searchData.copy(querySearch = query))*/
     }
 }
 

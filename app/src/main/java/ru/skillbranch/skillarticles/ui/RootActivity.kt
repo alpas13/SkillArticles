@@ -54,7 +54,7 @@ class RootActivity : AppCompatActivity() {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    /*override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_search, menu)
         val searchItem = menu?.findItem(R.id.action_search)
         val mSearchView = searchItem?.actionView as SearchView
@@ -104,7 +104,7 @@ class RootActivity : AppCompatActivity() {
         }
 
         return super.onCreateOptionsMenu(menu)
-    }
+    }*/
 
     private fun renderNotification(notify: Notify) {
         val coordinatorContainer: CoordinatorLayout = findViewById(R.id.coordinator_container)
