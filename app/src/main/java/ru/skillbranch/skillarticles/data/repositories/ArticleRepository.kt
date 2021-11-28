@@ -25,6 +25,12 @@ object ArticleRepository {
         local.updateAppSettings(appSettings)
     }
 
+    fun getSearchData(): LiveData<SearchData> = local.getSearchData()
+
+    fun updateSearchData(searchData: SearchData) {
+        local.updateSearchData(searchData)
+    }
+
     fun updateArticlePersonalInfo(info: ArticlePersonalInfo) {
         local.updateArticlePersonalInfo(info)
     }
