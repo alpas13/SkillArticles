@@ -54,36 +54,33 @@ class RootActivity : AppCompatActivity() {
         }
     }
 
-    /*override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_search, menu)
-        val searchItem = menu?.findItem(R.id.action_search)
-        val mSearchView = searchItem?.actionView as SearchView
-        mSearchView.apply {
+        val menuItem = menu?.findItem(R.id.action_search)
+        val searchView = menuItem?.actionView as SearchView
+        searchView.apply {
 
-            val currentState = viewModel.getSearchData().value
-
-            val isSearch = currentState?.isSearch ?: false
-            val currentQuery = currentState?.querySearch ?: ""
-
-            isSubmitButtonEnabled = true
             queryHint = "Search"
+            val isSearch = viewModel.currentState.isSearch
+            val currentQuery: String? = viewModel.currentState.searchQuery
+
 
             if (isSearch) {
-                searchItem.expandActionView()
-                onActionViewExpanded()
+                menuItem.expandActionView()
                 setQuery(currentQuery, false)
+                requestFocus()
+            } else {
+                clearFocus()
             }
 
-            searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            menuItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
                 override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
                     viewModel.handleSearchMode(true)
-                    onActionViewExpanded()
                     return true
                 }
 
                 override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
                     viewModel.handleSearchMode(false)
-                    onActionViewCollapsed()
                     return true
                 }
 
@@ -104,7 +101,7 @@ class RootActivity : AppCompatActivity() {
         }
 
         return super.onCreateOptionsMenu(menu)
-    }*/
+    }
 
     private fun renderNotification(notify: Notify) {
         val coordinatorContainer: CoordinatorLayout = findViewById(R.id.coordinator_container)

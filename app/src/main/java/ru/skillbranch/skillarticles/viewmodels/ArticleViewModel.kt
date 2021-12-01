@@ -51,13 +51,6 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
                 isBigText = settings.isBigText
             )
         }
-
-        /*subscribeOnDataSource(repository.getSearchData()) { searchData, state ->
-            state.copy(
-                searchQuery = searchData.querySearch,
-                isSearch = searchData.isSearch
-            )
-        }*/
     }
 
     /**
@@ -90,13 +83,9 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
         repository.updateSettings(settings.copy(isDarkMode = !settings.isDarkMode))
     }
 
-    /*fun getAppSettings(): LiveData<AppSettings> {
+    fun getAppSettings(): LiveData<AppSettings> {
         return repository.getAppSettings()
     }
-
-    fun getSearchData(): LiveData<SearchData> {
-        return repository.getSearchData()
-    }*/
 
 
     /**
@@ -184,8 +173,7 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
      * изменении конфигурации (пересоздании активити)
      */
     override fun handleSearchMode(isSearch: Boolean) {
-        /*val searchData = currentState.toSearchData()
-        repository.updateSearchData(searchData.copy(isSearch = isSearch))*/
+        updateState { it.copy(isSearch = isSearch) }
     }
 
     /**
@@ -193,8 +181,8 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
      * searchView при изменении конфигурации (пересоздании активити)
      */
     override fun handleSearch(query: String?) {
-        /*val searchData = currentState.toSearchData()
-        repository.updateSearchData(searchData.copy(querySearch = query))*/
+        query ?: return
+        updateState { it.copy(searchQuery = query) }
     }
 }
 
